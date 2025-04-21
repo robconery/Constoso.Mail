@@ -1,7 +1,7 @@
 using Dapper;
 namespace Contoso.Mail.Models;
 
-[Table("tags", Schema = "mail")]
+[Table("tags")]
 public class Tag
 {
   public int? ID { get; set; }
@@ -19,7 +19,7 @@ public class Tag
   }
 }
 
-[Table("tagged", Schema = "mail")]
+[Table("tagged")]
 public class Tagged
 {
   public int? ContactId { get; set; }

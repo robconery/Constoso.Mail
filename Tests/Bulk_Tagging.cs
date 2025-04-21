@@ -34,7 +34,7 @@ public class BulkTagTests : TestBase
       Conn.Insert(c);
     }
     ;
-    var emails = Conn.Query<string>("select email from mail.contacts limit 100");
+    var emails = Conn.Query<string>("select email from contacts limit 100");
     var req = new BulkTagRequest
     {
       Tag = "Bulk Test",

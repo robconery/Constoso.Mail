@@ -3,7 +3,7 @@ using Contoso.Data;
 
 namespace Contoso.Mail.Models;
 
-[Table("activity", Schema = "mail")]
+[Table("activity")]
 public class Activity
 {
   public int? ID { get; set; }

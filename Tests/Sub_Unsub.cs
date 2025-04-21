@@ -3,6 +3,7 @@ using Contoso.Data;
 using Contoso.Mail.Commands;
 using Contoso.Mail.Models;
 using Dapper;
+namespace Contoso.Mail.Tests;
 
 [Collection("SubUnsub")]
 public class SubUnsub : TestBase

@@ -8,7 +8,7 @@ namespace Contoso.Mail.Models;
 //The the email and finally the segment to send to, which is done by tag (or not)
 //If the initial use case is using a markdown document, then it should contain all 
 //that we need
-[Table("broadcasts", Schema = "mail")]
+[Table("broadcasts")]
 public class Broadcast
 {
   public int? ID { get; set; }
@@ -46,14 +46,14 @@ public class Broadcast
     long contacts = 0;
     if (SendToTag == "*")
     {
-      contacts = conn.ExecuteScalar<long>("select count(1) from mail.contacts where subscribed = true");
+      contacts = conn.ExecuteScalar<long>("select count(1) fromcontacts where subscribed = true");
     }
     else
     {
       var sql = @"
-        select count(1) as count from mail.contacts 
-        inner join mail.tagged on mail.tagged.contact_id = mail.contacts.id
-        inner join mail.tags on mail.tags.id = mail.tagged.tag_id
+        select count(1) as count fromcontacts 
+        inner jointagged ontagged.contact_id =contacts.id
+        inner jointags ontags.id =tagged.tag_id
         where subscribed = true
         and tags.slug = @tagSlug
       ";

@@ -7,7 +7,7 @@ public class SignUpRequest
   public string Name { get; set; }
   public string Email { get; set; }
 }
-[Table("contacts", Schema = "mail")]
+[Table("contacts")]
 public class Contact
 {
   public string Name { get; set; }

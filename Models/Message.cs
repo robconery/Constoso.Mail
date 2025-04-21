@@ -2,7 +2,7 @@ using Dapper;
 
 namespace Contoso.Mail.Models;
 
-[Table("messages", Schema = "mail")]
+[Table("messages")]
 public class Message
 {
   [Key]

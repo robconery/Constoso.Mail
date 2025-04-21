@@ -2,7 +2,7 @@ using Markdig;
 using Dapper;
 namespace Contoso.Mail.Models;
 
-[Table("emails", Schema = "mail")]
+[Table("emails")]
 public class Email
 {
   public int? ID { get; set; }

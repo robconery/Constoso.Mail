@@ -28,7 +28,7 @@ public class ContactRoutes
     {
       //searches by both email and name
       var response = new ContactSearchResponse { Term = term };
-      var sql = "select * from mail.contacts where email ~* @term or name ~* @term";
+      var sql = "select * fromcontacts where email ~* @term or name ~* @term";
       using var conn = db.Connect();
       response.Contacts = conn.Query<Contact>(sql, new { term });
       return response;

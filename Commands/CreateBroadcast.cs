@@ -42,9 +42,9 @@ public class CreateBroadcast
       //insert update delete
       //sql is the best
       var sql = @"
-          insert into mail.messages (source, slug, send_to, send_from, subject, html, send_at)
-          select 'broadcast', @slug, mail.contacts.email, @reply_to, @subject, @html, now() 
-          from mail.contacts
+          insert into messages (source, slug, send_to, send_from, subject, html, send_at)
+          select 'broadcast', @slug,contacts.email, @reply_to, @subject, @html,  datetime('now')
+          from contacts
         ";
 
       int messagesCreated;
@@ -53,10 +53,10 @@ public class CreateBroadcast
       if (_broadcast.SendToTag != "*")
       {
         sql += @"
-        inner join mail.tagged on mail.tagged.contact_id = mail.contacts.id
-        inner join mail.tags on mail.tags.id = mail.tagged.tag_id
+        inner join tagged on tagged.contact_id =contacts.id
+        inner join tags on tags.id = tagged.tag_id
         where subscribed = true
-        and mail.tags.slug = @tagSlug
+        and tags.slug = @tagSlug
         ";
 
         messagesCreated = conn.Execute(sql, new
@@ -82,7 +82,7 @@ public class CreateBroadcast
         });
       }
 
-      conn.Execute("NOTIFY broadcasts, '@slug'", new { slug = _broadcast.Slug }, tx);
+      //conn.Execute("NOTIFY broadcasts, '@slug'", new { slug = _broadcast.Slug }, tx);
       tx.Commit();
 
       return new CommandResult

@@ -8,7 +8,7 @@ public abstract class TestBase : IDisposable
   protected TestBase()
   {
     Viper.Test();
-    Conn = DB.Postgres();
+    Conn = DB.InMemorySqlite();
   }
 
   public void Dispose()

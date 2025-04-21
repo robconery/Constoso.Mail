@@ -41,7 +41,7 @@ namespace Contoso.Mail.Commands
             updated++;
           }
           var sql = @"
-          insert into mail.tagged (contact_id, tag_id) 
+          insert into tagged (contact_id, tag_id) 
           values (@contactId, @tagId) 
           on conflict do nothing"; //upsert if already tagged
           conn.Execute(sql, new { contactId = contact.ID, tagId = tag.ID }, tx);

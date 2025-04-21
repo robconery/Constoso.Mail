@@ -5,15 +5,7 @@ test: db
 	dotnet test
 
 db:
-	psql contoso < ./Data/db.sql --quiet
-
-mailpit:
-	docker run -d \
-	--restart unless-stopped \
-	--name=mailpit \
-	-p 8025:8025 \
-	-p 1025:1025 \
-	axllent/mailpit
+	sqlite3 < ./Data/db_sqlite.sql
 
 
 .phony: test db seed change_1 mailhog

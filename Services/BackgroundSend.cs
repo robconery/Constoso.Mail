@@ -23,7 +23,7 @@ public class BackgroundSend : BackgroundService
       //get 10 pending mails at a time to send
       Console.WriteLine("Checking for email to send...");
       var messages = new List<Message>();
-      var sql = "select * from mail.messages where status = 'pending' and send_at <= now()";
+      var sql = "select * frommessages where status = 'pending' and send_at <= now()";
       dynamic rows = await _conn.QueryAsync(sql);
       foreach (var row in rows)
       {
