@@ -1,0 +1,10 @@
+{
+  // Enable inline edits from Copilot Chat extension
+  "github.copilot.advanced": {
+    "inlineEdits": {
+      "enabled": true,
+      "showInStatusBar": true
+    },
+    "debug.overrideEngine": "chat-v3"  
+  }
+}
