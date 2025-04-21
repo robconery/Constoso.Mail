@@ -1,4 +1,3 @@
-
 using Contoso.Data;
 using Contoso.Mail.Models;
 using Dapper;
@@ -12,7 +11,7 @@ public class BackgroundSend : BackgroundService
   public BackgroundSend(IEmailSender outbox, IDb db)
   {
     _outbox = outbox;
-    _conn = db.Connect(); ;
+    _conn = db.Connect();
   }
   protected override async Task ExecuteAsync(CancellationToken stoppingToken)
   {
@@ -23,7 +22,7 @@ public class BackgroundSend : BackgroundService
       //get 10 pending mails at a time to send
       Console.WriteLine("Checking for email to send...");
       var messages = new List<Message>();
-      var sql = "select * frommessages where status = 'pending' and send_at <= now()";
+      var sql = "select * from messages where status = 'pending' and send_at <= now()";
       dynamic rows = await _conn.QueryAsync(sql);
       foreach (var row in rows)
       {

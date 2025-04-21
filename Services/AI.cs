@@ -1,20 +1,13 @@
 // // Copyright (c) Microsoft Corporation. All rights reserved.
 // // Licensed under the MIT License.
 
-// using System;
-// using System.Threading.Tasks;
-// using Azure.Identity;
-// using Azure.AI.OpenAI;
-
 using Azure;
 using Azure.AI.OpenAI;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Contoso.AI;
 
 public partial class Chat
 {
-
   public async Task<string> Prompt(string prompt)
   {
     var config = Viper.Config();

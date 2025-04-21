@@ -32,8 +32,8 @@ namespace Contoso.Data
     {
 
       // Ensure the directory exists
-      Directory.CreateDirectory(Path.GetDirectoryName(LocalDbPath));
-      var connectionString = $"Data Source={LocalDbPath}";
+
+      var connectionString = FindSqlFile().Replace("db_sqlite.sql", "contoso.db");
 
       Dapper.SimpleCRUD.SetDialect(Dapper.SimpleCRUD.Dialect.SQLite);
       var resolver = new CustomResolver();
@@ -67,16 +67,28 @@ namespace Contoso.Data
     {
       var sqlFile = "Data/db_sqlite.sql";
       var execDirectory = Directory.GetCurrentDirectory();
-      //do we have an Data directory here?
+
+      // Check current directory
       var filePath = Path.Combine(execDirectory, sqlFile);
-      if (File.Exists(filePath)) return filePath;
+      if (File.Exists(filePath))
+        return filePath;
 
-      //project root
-      string projectDirectory = Directory.GetParent(execDirectory).Parent.Parent.FullName;
-      filePath = Path.Combine(projectDirectory, sqlFile);
-      if (File.Exists(filePath)) return filePath;
+      // Safely navigate up to project root
+      var directory = new DirectoryInfo(execDirectory);
+      for (int i = 0; i < 3 && directory != null; i++)
+      {
+        directory = directory.Parent;
+      }
 
-      return "";
+      if (directory != null)
+      {
+        filePath = Path.Combine(directory.FullName, sqlFile);
+        if (File.Exists(filePath))
+          return filePath;
+      }
+
+      // If we're here, we couldn't find the file
+      throw new FileNotFoundException($"Could not locate SQL file: {sqlFile}");
     }
 
     private static void InitializeDatabase(IDbConnection connection)
@@ -84,7 +96,6 @@ namespace Contoso.Data
       // Read and execute the SQL schema from the project root
 
       var sqlFilePath = FindSqlFile();
-
       if (File.Exists(sqlFilePath))
       {
         string sql = File.ReadAllText(sqlFilePath);

@@ -42,7 +42,9 @@ app.UseSwaggerUI(options =>
   options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
   options.RoutePrefix = string.Empty;
 });
-var conn = DB.Sqlite();
+
+// Initialize DB connection but don't store the unused connection
+DB.Sqlite();
 Contoso.Mail.Api.PublicRoutes.MapRoutes(app);
 Contoso.Mail.Api.Admin.BroadcastRoutes.MapRoutes(app);
 Contoso.Mail.Api.Admin.ContactRoutes.MapRoutes(app);

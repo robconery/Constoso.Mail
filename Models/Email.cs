@@ -6,11 +6,11 @@ namespace Contoso.Mail.Models;
 public class Email
 {
   public int? ID { get; set; }
-  public string Slug { get; set; }
-  public string Subject { get; set; }
-  public string Preview { get; set; }
+  public string Slug { get; set; } = string.Empty;
+  public string Subject { get; set; } = string.Empty;
+  public string Preview { get; set; } = string.Empty;
   public int DelayHours { get; set; } = 0;
-  public string Html { get; set; }
+  public string Html { get; set; } = string.Empty;
   public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
   public Email(MarkdownEmail doc)
   {

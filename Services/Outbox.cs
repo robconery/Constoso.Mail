@@ -14,21 +14,23 @@ public interface IEmailSender
 
 public class InMemoryEmailSender : IEmailSender
 {
-  public IEnumerable<Message> Sent { get; set; } = new List<Message>();
-  public async Task<Message> Send(Message mssg)
+  private readonly List<Message> _sent = new List<Message>();
+  public IEnumerable<Message> Sent => _sent;
+
+  public Task<Message> Send(Message mssg)
   {
     mssg.Sent();
-    Sent.Append(mssg);
-    return mssg;
+    _sent.Add(mssg);
+    return Task.FromResult(mssg);
   }
-  public async Task<int> SendBulk(IEnumerable<Message> mssgs)
+  public Task<int> SendBulk(IEnumerable<Message> mssgs)
   {
     foreach (var mssg in mssgs)
     {
       mssg.Sent();
-      Sent.Append(mssg);
+      _sent.Add(mssg);
     }
-    return mssgs.Count();
+    return Task.FromResult(mssgs.Count());
   }
 }
 public class MailHogSender : IEmailSender
@@ -55,7 +57,6 @@ public class MailHogSender : IEmailSender
 
   public async Task<int> SendBulk(IEnumerable<Message> mssgs)
   {
-    //hello?
     var count = 0;
     await Parallel.ForEachAsync(mssgs, async (mssg, ct) =>
     {
@@ -75,7 +76,7 @@ public class MailHogSender : IEmailSender
       await client.SendMailAsync(sendMessage);
       mssg.Sent();
       await conn.UpdateAsync(mssg);
-      count++;
+      Interlocked.Increment(ref count);
     });
     return count;
   }
@@ -106,14 +107,15 @@ public class SmtpEmailSender : IEmailSender
       From = new MailAddress(mssg.SendFrom),
     };
     sendMessage.To.Add(new MailAddress(mssg.SendTo));
-    //await _client.SendMailAsync(sendMessage);
+    await _client.SendMailAsync(sendMessage);
     mssg.Sent();
     return mssg;
   }
+
   public async Task<int> SendBulk(IEnumerable<Message> mssgs)
   {
     var count = 0;
-    Parallel.ForEach(mssgs, async mssg =>
+    await Parallel.ForEachAsync(mssgs, async (mssg, ct) =>
     {
       //the SMTP client is not reusable and can only send
       //one email at a time, which is OK cause we're going it in parallel
@@ -130,7 +132,7 @@ public class SmtpEmailSender : IEmailSender
       await client.SendMailAsync(sendMessage);
       mssg.Sent();
       await conn.UpdateAsync(mssg);
-      count++;
+      Interlocked.Increment(ref count);
     });
     return count;
   }

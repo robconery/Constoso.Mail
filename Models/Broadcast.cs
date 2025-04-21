@@ -14,7 +14,7 @@ public class Broadcast
   public int? ID { get; set; }
   public int? EmailId { get; set; }
   public string Status { get; set; } = "pending";
-  public string Name { get; set; }
+  public string Name { get; set; } = string.Empty;
   public string? Slug { get; set; }
   public string? ReplyTo { get; set; }
   public string SendToTag { get; set; } = "*";
@@ -25,6 +25,11 @@ public class Broadcast
   }
   public static Broadcast FromMarkdownEmail(MarkdownEmail doc)
   {
+    //null check for doc.Data
+    if (doc.Data == null)
+    {
+      throw new InvalidOperationException("Need frontmatter with Subject and Slug");
+    }
     var broadcast = new Broadcast();
     broadcast.Name = doc.Data.Subject;
     broadcast.Slug = doc.Data.Slug;
@@ -35,6 +40,12 @@ public class Broadcast
   {
     var broadcast = new Broadcast();
     var doc = MarkdownEmail.FromString(markdown);
+    //null check for doc.Data
+    if (doc.Data == null)
+    {
+      throw new InvalidOperationException("Need frontmatter with Subject and Slug");
+    }
+
     broadcast.Name = doc.Data.Subject;
     broadcast.Slug = doc.Data.Slug;
     broadcast.SendToTag = doc.Data.SendToTag;
@@ -46,14 +57,14 @@ public class Broadcast
     long contacts = 0;
     if (SendToTag == "*")
     {
-      contacts = conn.ExecuteScalar<long>("select count(1) fromcontacts where subscribed = true");
+      contacts = conn.ExecuteScalar<long>("select count(1) from contacts where subscribed = true");
     }
     else
     {
       var sql = @"
-        select count(1) as count fromcontacts 
-        inner jointagged ontagged.contact_id =contacts.id
-        inner jointags ontags.id =tagged.tag_id
+        select count(1) as count from contacts 
+        inner join tagged on tagged.contact_id = contacts.id
+        inner join tags on tags.id = tagged.tag_id
         where subscribed = true
         and tags.slug = @tagSlug
       ";
