@@ -1,6 +1,6 @@
 
 using Dapper;
-namespace Tailwind.Mail.Models;
+namespace Contoso.Mail.Models;
 
 public class SignUpRequest
 {
@@ -16,10 +16,10 @@ public class Contact
   public string Key { get; set; } = Guid.NewGuid().ToString();
   public int? ID { get; set; }
   public DateTimeOffset CreatedAt { get; set; }
-  
+
   public Contact()
   {
-    
+
   }
   public Contact(string name, string email)
   {

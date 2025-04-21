@@ -1,17 +1,17 @@
-namespace Tailwind.Mail.Commands
+namespace Contoso.Mail.Commands
 {
-    public class LinkClickedCommand
+  public class LinkClickedCommand
+  {
+    public LinkClickedCommand(string key)
     {
-        public LinkClickedCommand(string key)
-        {
-            Key = key;
-        }
-
-        public string Key { get; }
-
-        public string Execute()
-        {
-            return $"Link clicked: {Key}";
-        }
+      Key = key;
     }
+
+    public string Key { get; }
+
+    public string Execute()
+    {
+      return $"Link clicked: {Key}";
+    }
+  }
 }

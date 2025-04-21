@@ -1,8 +1,8 @@
 using System.Data;
-using Tailwind.Data;
-using Tailwind.Mail.Models;
+using Contoso.Data;
+using Contoso.Mail.Models;
 using Dapper;
-namespace Tailwind.Mail.Commands;
+namespace Contoso.Mail.Commands;
 
 
 public class CreateBroadcast
@@ -13,19 +13,22 @@ public class CreateBroadcast
   {
     _email = new Email(email);
     _broadcast = Broadcast.FromMarkdownEmail(email);
-  } 
-  
+  }
+
   //TODO: Clean this up
-  public CommandResult Execute(IDbConnection conn){
+  public CommandResult Execute(IDbConnection conn)
+  {
 
     var from = Viper.Config().Get("DEFAULT_FROM");
-    if(String.IsNullOrEmpty(from)){
-      from="noreply@tailwind.dev";
+    if (String.IsNullOrEmpty(from))
+    {
+      from = "noreply@Contoso.dev";
     }
 
 
     var tx = conn.BeginTransaction();
-    try{
+    try
+    {
       //save the email
       var emailId = conn.Insert(_email, tx);
       _broadcast.EmailId = emailId;
@@ -43,11 +46,12 @@ public class CreateBroadcast
           select 'broadcast', @slug, mail.contacts.email, @reply_to, @subject, @html, now() 
           from mail.contacts
         ";
-        
+
       int messagesCreated;
 
 
-      if(_broadcast.SendToTag != "*"){
+      if (_broadcast.SendToTag != "*")
+      {
         sql += @"
         inner join mail.tagged on mail.tagged.contact_id = mail.contacts.id
         inner join mail.tags on mail.tags.id = mail.tagged.tag_id
@@ -55,7 +59,8 @@ public class CreateBroadcast
         and mail.tags.slug = @tagSlug
         ";
 
-        messagesCreated = conn.Execute(sql, new{
+        messagesCreated = conn.Execute(sql, new
+        {
           broadcastId,
           tagSlug = _broadcast.SendToTag,
           slug = _email.Slug,
@@ -63,9 +68,12 @@ public class CreateBroadcast
           subject = _email.Subject,
           html = _email.Html
         });
-      }else{
-        sql+="where subscribed = true";
-        messagesCreated = conn.Execute(sql, new{
+      }
+      else
+      {
+        sql += "where subscribed = true";
+        messagesCreated = conn.Execute(sql, new
+        {
           broadcastId,
           slug = _email.Slug,
           reply_to = from,
@@ -73,19 +81,23 @@ public class CreateBroadcast
           html = _email.Html
         });
       }
-      
-      conn.Execute("NOTIFY broadcasts, '@slug'", new {slug=_broadcast.Slug}, tx);
+
+      conn.Execute("NOTIFY broadcasts, '@slug'", new { slug = _broadcast.Slug }, tx);
       tx.Commit();
 
-      return new CommandResult{
-        Data = new{
+      return new CommandResult
+      {
+        Data = new
+        {
           BroadcastId = broadcastId,
           EmailId = emailId,
           Notified = true
         },
         Inserted = messagesCreated
       };
-    }catch(Exception e){
+    }
+    catch (Exception e)
+    {
       tx.Rollback();
       throw e;
     }

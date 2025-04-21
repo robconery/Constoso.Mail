@@ -1,9 +1,9 @@
 using System.Data;
 using Dapper;
-using Tailwind.Data;
-using Tailwind.Mail.Models;
+using Contoso.Data;
+using Contoso.Mail.Models;
 
-namespace Tailwind.Mail.Commands
+namespace Contoso.Mail.Commands
 {
   public class BulkTagCommand
   {

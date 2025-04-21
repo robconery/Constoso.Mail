@@ -75,7 +75,7 @@ create table broadcasts(
   status text not null default 'pending',
   name text not null,
   send_to_tag text,
-  reply_to text not null default 'noreply@tailwindtraders.dev',
+  reply_to text not null default 'noreply@contosotraders.dev',
   created_at timestamptz not null default now(),
   processed_at timestamptz
 );

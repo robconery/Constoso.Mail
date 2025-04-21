@@ -1,41 +1,51 @@
-using Tailwind.Mail.Models;
-using Tailwind.Data;
+using Contoso.Mail.Models;
+using Contoso.Data;
 using Dapper;
 using System.Data;
 
-namespace Tailwind.Mail.Commands;
+namespace Contoso.Mail.Commands;
 
-public class ContactOptinCommand{
+public class ContactOptinCommand
+{
   public Contact Contact { get; set; }
   public ContactOptinCommand(Contact contact)
   {
     Contact = contact;
   }
-  public CommandResult Execute(IDbConnection conn){
-    
+  public CommandResult Execute(IDbConnection conn)
+  {
+
     var tx = conn.BeginTransaction();
-    try{
+    try
+    {
       Contact.Subscribed = true;
-      conn.Update(Contact,tx);
-      conn.Insert(new Activity{
+      conn.Update(Contact, tx);
+      conn.Insert(new Activity
+      {
         ContactId = Contact.ID,
         Key = "optin",
-        Description="Opted in using key"
-      },tx);
+        Description = "Opted in using key"
+      }, tx);
       tx.Commit();
 
-      return new CommandResult{
+      return new CommandResult
+      {
         Updated = 1,
-        Data = new{
+        Data = new
+        {
           Success = true,
           Message = "Contact subscribed"
         }
       };
 
-    }catch(Exception e){
+    }
+    catch (Exception e)
+    {
       tx.Rollback();
-      return new CommandResult{
-        Data = new{
+      return new CommandResult
+      {
+        Data = new
+        {
           Success = false,
           Message = e.Message
         }

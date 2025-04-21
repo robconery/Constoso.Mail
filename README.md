@@ -1,6 +1,6 @@
 # The Mail Service API
 
-This is the .NET Minimal API backend service for the Tailwind Traders list server. This API is all about sending transactional emails and queueing up batch sends to an email list. Tailwind Traders is happy to share this with the world as a free and open source project.
+This is the .NET Minimal API backend service for the Contoso list server. This API is all about sending transactional emails and queueing up batch sends to an email list. Contoso is happy to share this with the world as a free and open source project.
 
 For it to work properly, you'll need to set a few ENV variables:
 
@@ -12,7 +12,7 @@ SMTP_USER=""
 SMTP_PASSWORD=""
 SMTP_HOST=""
 
-DEFAULT_FROM="test@tailwind.dev"
+DEFAULT_FROM="test@Contoso.dev"
 
 ETHEREAL_USER="easy and free to set up at ethereal.email"
 ETHEREAL_PASSWORD=""
@@ -33,7 +33,7 @@ There will be public and private endpoints, with the private stuff being for adm
 
 ## Stories
 
-Here are the scenarios we're trying to hit with Tailwind Traders first release:
+Here are the scenarios we're trying to hit with Contoso first release:
 
  - [x] **Jill queues a broadcast to 10K contacts**. Jill has 10,001 contacts in her database with one opting out. The app should queue up 10K messages for send.
  - [x] **Jim wants to signup to Jill's list**. He submits a form and is sent a double opt-in link to confirm his signup.

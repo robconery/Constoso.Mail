@@ -1,13 +1,13 @@
 using Xunit;
-using Tailwind.Data;
-using Tailwind.Mail.Commands;
+using Contoso.Data;
+using Contoso.Mail.Commands;
 using Markdig;
-using Tailwind.Mail.Models;
+using Contoso.Mail.Models;
 
-namespace Tailwind.Mail.Tests;
+namespace Contoso.Mail.Tests;
 
 [Collection("Markdown")]
-public class BroadcastFromMarkdown:TestBase
+public class BroadcastFromMarkdown : TestBase
 {
   public string? _markdown { get; set; }
   public MarkdownEmail _doc { get; set; }
@@ -60,7 +60,7 @@ public class BroadcastFromMarkdown:TestBase
     var mdEmail = MarkdownEmail.FromString(markdown);
     var res = new CreateBroadcast(mdEmail).Execute(Conn);
     Assert.True(res.Data.BroadcastId > 0);
-    
+
   }
   [Fact]
   public void A_valid_tagged_broadcast_is_saved_to_the_db()

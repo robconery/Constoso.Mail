@@ -1,8 +1,8 @@
-namespace Tailwind.Mail.Services;
+namespace Contoso.Mail.Services;
 using System.Net.Mail;
 using System.Net;
-using Tailwind.Mail.Models;
-using Tailwind.Data;
+using Contoso.Mail.Models;
+using Contoso.Data;
 using Dapper;
 
 
@@ -12,7 +12,8 @@ public interface IEmailSender
   public Task<int> SendBulk(IEnumerable<Message> mssgs);
 }
 
-public class InMemoryEmailSender: IEmailSender {
+public class InMemoryEmailSender : IEmailSender
+{
   public IEnumerable<Message> Sent { get; set; } = new List<Message>();
   public async Task<Message> Send(Message mssg)
   {
@@ -22,7 +23,7 @@ public class InMemoryEmailSender: IEmailSender {
   }
   public async Task<int> SendBulk(IEnumerable<Message> mssgs)
   {
-    foreach(var mssg in mssgs)
+    foreach (var mssg in mssgs)
     {
       mssg.Sent();
       Sent.Append(mssg);
@@ -39,11 +40,12 @@ public class MailHogSender : IEmailSender
   }
   public async Task<Message> Send(Message mssg)
   {
-    var sendMessage = new MailMessage{
+    var sendMessage = new MailMessage
+    {
       IsBodyHtml = true,
       Subject = mssg.Subject,
       Body = mssg.Html,
-      From= new MailAddress(mssg.SendFrom),
+      From = new MailAddress(mssg.SendFrom),
     };
     sendMessage.To.Add(new MailAddress(mssg.SendTo));
     await _client.SendMailAsync(sendMessage);
@@ -51,16 +53,19 @@ public class MailHogSender : IEmailSender
     return mssg;
   }
 
-  public async Task<int> SendBulk(IEnumerable<Message> mssgs){
+  public async Task<int> SendBulk(IEnumerable<Message> mssgs)
+  {
     //hello?
     var count = 0;
-    await Parallel.ForEachAsync(mssgs, async (mssg, ct) => {
+    await Parallel.ForEachAsync(mssgs, async (mssg, ct) =>
+    {
       //the SMTP client is not reusable and can only send
       //one email at a time, which is OK cause we're going it in parallel.
       //Also: the db calls will get whacked out unless we explicitly open a new connection
       using var client = new SmtpClient("localhost", 1025);
       using var conn = new DB().Connect();
-      var sendMessage = new MailMessage{
+      var sendMessage = new MailMessage
+      {
         IsBodyHtml = true,
         Subject = mssg.Subject,
         Body = mssg.Html,
@@ -75,7 +80,8 @@ public class MailHogSender : IEmailSender
     return count;
   }
 }
-public class SmtpEmailSender: IEmailSender{
+public class SmtpEmailSender : IEmailSender
+{
   private SmtpClient _client;
   public SmtpEmailSender()
   {
@@ -92,26 +98,29 @@ public class SmtpEmailSender: IEmailSender{
 
   public async Task<Message> Send(Message mssg)
   {
-    var sendMessage = new MailMessage{
+    var sendMessage = new MailMessage
+    {
       IsBodyHtml = true,
       Subject = mssg.Subject,
       Body = mssg.Html,
-      From=new MailAddress(mssg.SendFrom),
+      From = new MailAddress(mssg.SendFrom),
     };
     sendMessage.To.Add(new MailAddress(mssg.SendTo));
-    await _client.SendMailAsync(sendMessage);
+    //await _client.SendMailAsync(sendMessage);
     mssg.Sent();
     return mssg;
   }
   public async Task<int> SendBulk(IEnumerable<Message> mssgs)
   {
     var count = 0;
-    Parallel.ForEach(mssgs, async mssg => {
+    Parallel.ForEach(mssgs, async mssg =>
+    {
       //the SMTP client is not reusable and can only send
       //one email at a time, which is OK cause we're going it in parallel
       using var client = new SmtpClient("localhost", 1025);
       using var conn = new DB().Connect();
-      var sendMessage = new MailMessage{
+      var sendMessage = new MailMessage
+      {
         IsBodyHtml = true,
         Subject = mssg.Subject,
         Body = mssg.Html,

@@ -4,9 +4,10 @@ using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 
-namespace Tailwind.Mail.Models;
+namespace Contoso.Mail.Models;
 
-public class MarkdownEmail{
+public class MarkdownEmail
+{
   public string? Markdown { get; set; }
   public string? Html { get; set; }
   public dynamic? Data { get; set; }
@@ -15,24 +16,29 @@ public class MarkdownEmail{
   {
 
   }
-  public static MarkdownEmail FromFile(string path){
+  public static MarkdownEmail FromFile(string path)
+  {
     var email = new MarkdownEmail();
     email.Markdown = File.ReadAllText(path);
     email.Render();
     return email;
-  } 
-  public static MarkdownEmail FromString(string markdown){
+  }
+  public static MarkdownEmail FromString(string markdown)
+  {
     var email = new MarkdownEmail();
     email.Markdown = markdown;
     email.Render();
     return email;
   }
-  public bool IsValid(){
-    if(Data == null) return false;
+  public bool IsValid()
+  {
+    if (Data == null) return false;
     return Data.Subject != null && Data.Summary != null;
   }
-  private void Render(){
-    if(Markdown == null){
+  private void Render()
+  {
+    if (Markdown == null)
+    {
       throw new Exception("Markdown is null; be sure to set that first");
     }
     var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
@@ -51,10 +57,12 @@ public class MarkdownEmail{
       parser.Consume<DocumentEnd>();
     }
     var expando = (IDictionary<string, object>)Data;
-    if(!expando.ContainsKey("Slug")){
+    if (!expando.ContainsKey("Slug"))
+    {
       Data.Slug = Data.Subject.ToLower().Replace(" ", "-");
     }
-    if(!expando.ContainsKey("SendToTag")){
+    if (!expando.ContainsKey("SendToTag"))
+    {
       Data.SendToTag = "*"; //send to everyone
     }
   }

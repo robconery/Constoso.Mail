@@ -1,10 +1,11 @@
 using Dapper;
-using Tailwind.Data;
+using Contoso.Data;
 
-namespace Tailwind.Mail.Models;
+namespace Contoso.Mail.Models;
 
-[Table("activity",Schema = "mail")]
-public class Activity{
+[Table("activity", Schema = "mail")]
+public class Activity
+{
   public int? ID { get; set; }
   public int? ContactId { get; set; }
   public string Key { get; set; } = Guid.NewGuid().ToString();
@@ -14,5 +15,5 @@ public class Activity{
   {
 
   }
-  
+
 }

@@ -1,16 +1,17 @@
 using Dapper;
 
-namespace Tailwind.Mail.Models;
+namespace Contoso.Mail.Models;
 
 [Table("messages", Schema = "mail")]
-public class Message{
+public class Message
+{
   [Key]
   public int? ID { get; set; }
   public string Source { get; set; } = "broadcast";
   public string Slug { get; set; }
   public string Status { get; set; } = "pending";
   public string SendTo { get; set; }
-  public string SendFrom { get; set; } = "noreply@tailwind.dev";
+  public string SendFrom { get; set; } = "noreply@Contoso.dev";
   public string Subject { get; set; }
   public string Html { get; set; }
   //public DateTimeOffset SendAt { get; set; }
@@ -26,14 +27,16 @@ public class Message{
   }
   public Message()
   {
-    
+
   }
-  public void Sent(){
+  public void Sent()
+  {
     this.Status = "sent";
     this.SentAt = DateTimeOffset.UtcNow;
   }
-  public bool ReadyToSend(){
-    return this.Status == "pending" && 
+  public bool ReadyToSend()
+  {
+    return this.Status == "pending" &&
       //this.SendAt <= DateTimeOffset.Now &&
       !String.IsNullOrEmpty(this.SendTo) &&
       !String.IsNullOrEmpty(this.SendFrom) &&

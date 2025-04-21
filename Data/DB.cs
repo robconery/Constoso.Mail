@@ -2,7 +2,7 @@ using System.Data;
 using Npgsql;
 using Dapper;
 using System.Reflection;
-namespace Tailwind.Data
+namespace Contoso.Data
 {
   public class CustomResolver : SimpleCRUD.IColumnNameResolver
   {
@@ -12,11 +12,12 @@ namespace Tailwind.Data
     }
   }
 
-  public interface IDb{
+  public interface IDb
+  {
     IDbConnection Connect();
   }
 
-  public class DB: IDb
+  public class DB : IDb
   {
     public IDbConnection Connect()
     {
@@ -25,8 +26,9 @@ namespace Tailwind.Data
     public static IDbConnection Postgres()
     {
       var connectionString = Viper.Config().Get("DATABASE_URL");
-      
-      if(String.IsNullOrEmpty(connectionString)){
+
+      if (String.IsNullOrEmpty(connectionString))
+      {
         throw new InvalidProgramException("No DATABASE_URL found in environment");
       }
 
@@ -35,7 +37,7 @@ namespace Tailwind.Data
       SimpleCRUD.SetColumnNameResolver(resolver);
       var conn = new NpgsqlConnection(connectionString);
       conn.Open();
-      
+
       return conn;
     }
   }
