@@ -1,4 +1,3 @@
-using Npgsql;
 using System.Dynamic;
 using System.Data;
 using System.Collections.Specialized;
@@ -6,8 +5,6 @@ using System.Text;
 namespace Contoso.Data;
 public static class StringExtensions
 {
-
-
   public static string ToSnakeCase(this string text)
   {
     if (text == null)
@@ -88,60 +85,10 @@ public static class ObjectExtensions
   {
     return (IDictionary<string, object>)thingy.ToExpando();
   }
-
 }
 
-public static class CommandExtensions
+public static class DataReaderExtensions
 {
-
-
-  public static NpgsqlCommand AddParams(this NpgsqlCommand cmd, object o)
-  {
-    var expando = o.ToExpando();
-    var values = (IDictionary<string, object>)expando;
-    return AddParamsDictionary(cmd, values);
-  }
-  public static NpgsqlCommand AddParamsDictionary(this NpgsqlCommand cmd, IDictionary<string, object> values)
-  {
-    if (values != null)
-    {
-      foreach (var item in values)
-      {
-        if (item.Value != null)
-        {
-          cmd.Parameters.AddWithValue(item.Key, item.Value);
-          //Console.WriteLine($"{item.Key} = {item.Value}");
-        }
-
-      }
-    }
-    return cmd;
-  }
-
-
-  public static NpgsqlCommand Where(this NpgsqlCommand cmd, object o)
-  {
-    var expando = o.ToExpando();
-    var parameters = (IDictionary<string, object>)expando;
-    //var keys = parameters.Keys.Where(k => k != null).Select(k => $"{k}=@{k}");
-    cmd.AddParams(o);
-    var keys = cmd.Parameters.Select(p => $"{p.ParameterName}=@{p.ParameterName}");
-    cmd.CommandText += $" where {string.Join(" and ", keys)}";
-
-    return cmd;
-  }
-  public static NpgsqlCommand Limit(this NpgsqlCommand cmd, int limit)
-  {
-    cmd.CommandText += $" limit {limit}";
-    return cmd;
-  }
-
-  public static NpgsqlCommand Order(this NpgsqlCommand cmd, string column = "id", string direction = "asc")
-  {
-    cmd.CommandText += $" order by {column} {direction}";
-    return cmd;
-  }
-
   public static List<dynamic> ToExpandoList(this IDataReader rdr)
   {
     var result = new List<dynamic>();
@@ -151,6 +98,7 @@ public static class CommandExtensions
     }
     return result;
   }
+
   public static dynamic RecordToExpando(this IDataReader rdr)
   {
     dynamic e = new ExpandoObject();
@@ -164,5 +112,4 @@ public static class CommandExtensions
     }
     return e;
   }
-
 }

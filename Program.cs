@@ -1,4 +1,3 @@
-
 using Microsoft.OpenApi.Models;
 using Contoso.Data;
 using Contoso.Mail.Services;
@@ -43,7 +42,7 @@ app.UseSwaggerUI(options =>
   options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
   options.RoutePrefix = string.Empty;
 });
-var conn = DB.Postgres();
+var conn = DB.Sqlite();
 Contoso.Mail.Api.PublicRoutes.MapRoutes(app);
 Contoso.Mail.Api.Admin.BroadcastRoutes.MapRoutes(app);
 Contoso.Mail.Api.Admin.ContactRoutes.MapRoutes(app);

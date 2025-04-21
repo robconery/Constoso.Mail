@@ -1,6 +1,5 @@
 using System.Data;
 using Microsoft.Data.Sqlite;
-using Npgsql;
 using Dapper;
 using System.Reflection;
 using System.IO;
@@ -103,24 +102,6 @@ namespace Contoso.Data
       {
         throw new InvalidOperationException($"Can't find sql file:  {sqlFilePath}");
       }
-    }
-
-    public static IDbConnection Postgres()
-    {
-      var connectionString = Viper.Config().Get("DATABASE_URL");
-
-      if (String.IsNullOrEmpty(connectionString))
-      {
-        throw new InvalidProgramException("No DATABASE_URL found in environment");
-      }
-
-      Dapper.SimpleCRUD.SetDialect(Dapper.SimpleCRUD.Dialect.PostgreSQL);
-      var resolver = new CustomResolver();
-      SimpleCRUD.SetColumnNameResolver(resolver);
-      var conn = new NpgsqlConnection(connectionString);
-      conn.Open();
-
-      return conn;
     }
   }
 }
