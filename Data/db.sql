@@ -1,144 +1,110 @@
-drop schema if exists mail cascade;
-create schema mail;
-set search_path=mail;
+-- SQLite schema for Contoso.Mail
 
+-- Clean up any existing tables with the same names
+DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS broadcasts;
+DROP TABLE IF EXISTS emails;
+DROP TABLE IF EXISTS subscriptions;
+DROP TABLE IF EXISTS sequences;
+DROP TABLE IF EXISTS tagged;
+DROP TABLE IF EXISTS tags;
+DROP TABLE IF EXISTS activity;
+DROP TABLE IF EXISTS contacts;
 
-create table contacts(
-  id serial primary key,
-  email text not null unique,
-  key text not null default gen_random_uuid(),
-  subscribed boolean not null default true,
-  name text,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+-- Create tables
+CREATE TABLE contacts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT NOT NULL UNIQUE,
+  key TEXT NOT NULL DEFAULT (hex(randomblob(16))),
+  subscribed BOOLEAN NOT NULL DEFAULT 1,
+  name TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-create table activity(
-  id serial primary key,
-  contact_id int not null references contacts(id),
-  key text not null,
-  description text not null,
-  created_at timestamptz not null default now()
+CREATE TABLE activity (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  contact_id INTEGER NOT NULL,
+  key TEXT NOT NULL,
+  description TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (contact_id) REFERENCES contacts(id)
 );
 
-create table tags(
-  id serial not null primary key,
-  slug text not null unique,
-  name text,
-  description text,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+CREATE TABLE tags (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  slug TEXT NOT NULL UNIQUE,
+  name TEXT,
+  description TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-
-create table tagged(
-  contact_id int not null references contacts(id),
-  tag_id int not null references tags(id),
-  primary key (contact_id, tag_id)
+CREATE TABLE tagged (
+  contact_id INTEGER NOT NULL,
+  tag_id INTEGER NOT NULL,
+  PRIMARY KEY (contact_id, tag_id),
+  FOREIGN KEY (contact_id) REFERENCES contacts(id),
+  FOREIGN KEY (tag_id) REFERENCES tags(id)
 );
 
-create table sequences(
-  id serial not null primary key,
-  slug text not null unique,
-  name text,
-  description text,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+CREATE TABLE sequences (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  slug TEXT NOT NULL UNIQUE,
+  name TEXT,
+  description TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- people that are subscribed to a sequence
-create table subscriptions(
-  contact_id int not null references contacts(id),
-  sequence_id int not null references sequences(id),
-  created_at timestamptz not null default now(),
-  primary key (contact_id, sequence_id)
+CREATE TABLE subscriptions (
+  contact_id INTEGER NOT NULL,
+  sequence_id INTEGER NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (contact_id, sequence_id),
+  FOREIGN KEY (contact_id) REFERENCES contacts(id),
+  FOREIGN KEY (sequence_id) REFERENCES sequences(id)
 );
 
--- templates, which can belong to 0/n sequences. Transactionals don't have a sequence, but broadcasts
--- are single-sequence emails as they need to have a title and description for tracking purposes
-create table emails(
-  id serial not null primary key,
-  sequence_id int references sequences(id),
-  slug text not null unique,
-  subject text not null,
-  preview text,
-  delay_hours int not null default 0,
-  html text,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+-- templates, which can belong to 0/n sequences
+CREATE TABLE emails (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  sequence_id INTEGER,
+  slug TEXT NOT NULL UNIQUE,
+  subject TEXT NOT NULL,
+  preview TEXT,
+  delay_hours INTEGER NOT NULL DEFAULT 0,
+  html TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (sequence_id) REFERENCES sequences(id)
 );
 
-create table broadcasts(
-  id serial primary key,
-  email_id int not null references emails(id),
-  slug text not null unique,
-  status text not null default 'pending',
-  name text not null,
-  send_to_tag text,
-  reply_to text not null default 'noreply@contosotraders.dev',
-  created_at timestamptz not null default now(),
-  processed_at timestamptz
+CREATE TABLE broadcasts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email_id INTEGER NOT NULL,
+  slug TEXT NOT NULL UNIQUE,
+  status TEXT NOT NULL DEFAULT 'pending',
+  name TEXT NOT NULL,
+  send_to_tag TEXT,
+  reply_to TEXT NOT NULL DEFAULT 'noreply@contosotraders.dev',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  processed_at TIMESTAMP,
+  FOREIGN KEY (email_id) REFERENCES emails(id)
 );
 
--- This is a log table of actual emails sent and is *not* supposed to be relational
--- it's a historical log table so we need to be sure it stands on its own as a 
--- record of what happened
-create table messages(
-  id serial not null primary key,
-  source text not null default 'broadcast', -- sequence or transaction
-  slug text, -- don't want a hardcoded ID
-  status text not null default 'pending',
-  send_to text not null,
-  send_from text not null,
-  subject text not null,
-  html text not null,
-  send_at timestamptz,
-  sent_at timestamptz,
-  created_at timestamptz not null default now()
+-- This is a log table of actual emails sent
+CREATE TABLE messages (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  source TEXT NOT NULL DEFAULT 'broadcast',
+  slug TEXT,
+  status TEXT NOT NULL DEFAULT 'pending',
+  send_to TEXT NOT NULL,
+  send_from TEXT NOT NULL,
+  subject TEXT NOT NULL,
+  html TEXT NOT NULL,
+  send_at TIMESTAMP,
+  sent_at TIMESTAMP,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
---seeds for testing
-
--- this function will queue a segment with the passed in HTML body
--- not too certain how this will work but... let's see
-
--- drop function if exists queue_broadcast(int);
-
--- create function queue_broadcast(bid int) 
--- returns setof broadcasts as $$
-
--- declare
-
---   em emails;
---   b broadcasts;
-
--- begin 
---   -- grab our template
-  
---   select * into b from broadcasts where id = bid;
---   select * into em from email where id = b.email_id;
-
---   -- pop into the messages queue
---   insert into messages(broadcast_id, send_to, send_from, subject, html, send_at)
---   select b.id, contacts.email, b.reply_to, em.subject, em.html, now()
---   from contacts
---   inner join segments on segments.contact_id = contacts.id
---   where segments.group_id = b.group_id and contacts.subscribed = true;
-
---   -- update the broadcast
---   update broadcasts set message_count = (select count(1) from messages where broadcast_id = b.id)
---   where id = b.id;
-
---   select pg_notify('broadcasts',b.id);
-
---   return query 
---   select * from broadcasts where id = b.id;
-
--- end;
-
-
-
--- $$ language plpgsql;
-
--- insert into groups(slug,name)
--- values('default','Everyone');

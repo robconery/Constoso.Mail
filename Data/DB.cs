@@ -33,7 +33,7 @@ namespace Contoso.Data
 
       // Ensure the directory exists
 
-      var connectionString = FindSqlFile().Replace("db_sqlite.sql", "contoso.db");
+      var connectionString = FindSqlFile().Replace("db.sql", "contoso.db");
 
       Dapper.SimpleCRUD.SetDialect(Dapper.SimpleCRUD.Dialect.SQLite);
       var resolver = new CustomResolver();
@@ -65,7 +65,7 @@ namespace Contoso.Data
 
     private static string FindSqlFile()
     {
-      var sqlFile = "Data/db_sqlite.sql";
+      var sqlFile = "Data/db.sql";
       var execDirectory = Directory.GetCurrentDirectory();
 
       // Check current directory
