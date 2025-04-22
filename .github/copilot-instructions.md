@@ -4,9 +4,16 @@ This is the Tailwind Traders list mailer that uses and async queue to process em
 
 ## Stack
 
-- The project currently uses Dapper with PostgreSQL, but we're moving to Entity Framework 9+ with SQLite.
+- The project currently uses Dapper with SQLite, but we're moving to Entity Framework 9+ with SQLite.
 - Tests use SQLite in memory
 - The project is a dotnet core 9+ web api using ASP.NET Minimal API
+
+## The Process
+
+We're going in small steps. Do not replace or overwrite existing files, only create new ones:
+
+- New tests go in `/Tests` directory with `ef` appended to name.
+- New models go in the `/Data/Models` directory
 
 ## Coding Styles for C#
 
