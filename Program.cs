@@ -45,10 +45,6 @@ app.UseSwaggerUI(options =>
 
 // Initialize DB connection but don't store the unused connection
 DB.Sqlite();
-Contoso.Mail.Api.PublicRoutes.MapRoutes(app);
-Contoso.Mail.Api.Admin.BroadcastRoutes.MapRoutes(app);
-Contoso.Mail.Api.Admin.ContactRoutes.MapRoutes(app);
-Contoso.Mail.Api.Admin.BulkOperationRoutes.MapRoutes(app);
 
 app.Run();
 

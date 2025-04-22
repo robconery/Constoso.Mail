@@ -5,7 +5,7 @@ using Contoso.Mail.Models;
 
 namespace Contoso.Mail.Commands
 {
-  public class BulkTagCommand
+  public class ContactTagCommand
   {
     public string? Tag { get; set; }
     public IEnumerable<string> Emails { get; set; } = new List<string>();
