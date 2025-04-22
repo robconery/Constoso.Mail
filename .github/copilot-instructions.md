@@ -10,7 +10,7 @@ This is the Tailwind Traders list mailer that uses and async queue to process em
 
 ## The Process
 
-We're going in small steps. Do not replace or overwrite existing files, only create new ones:
+We're going in small steps. Do not replace or overwrite existing files aside from `/Services` and do that only when I direct it.
 
 - New tests go in `/Tests` directory with `ef` appended to name.
 - New models go in the `/Data/Models` directory
