@@ -2,7 +2,6 @@ using System.Data;
 using Microsoft.Data.Sqlite;
 using Dapper;
 using System.Reflection;
-using System.IO;
 
 namespace Contoso.Data
 {
