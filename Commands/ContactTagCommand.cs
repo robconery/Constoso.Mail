@@ -11,6 +11,10 @@ namespace Contoso.Mail.Commands
     public IEnumerable<string> Emails { get; set; } = new List<string>();
     public CommandResult Execute(IDbConnection conn)
     {
+      if (string.IsNullOrEmpty(Tag))
+      {
+        throw new InvalidOperationException("Need a tag before execution");
+      }
       var tx = conn.BeginTransaction();
       var updated = 0;
       var inserted = 0;
