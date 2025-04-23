@@ -8,11 +8,7 @@ var config = Viper.Config("Integration");
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IDb, DB>();
-builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
-if (config.Get("SEND_WORKER") == "local")
-{
-  builder.Services.AddHostedService<BackgroundSend>();
-}
+
 builder.Services.AddSwaggerGen(options =>
 {
   options.SwaggerDoc("v1", new OpenApiInfo
