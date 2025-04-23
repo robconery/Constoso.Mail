@@ -3,7 +3,7 @@ using Microsoft.Data.Sqlite;
 using Dapper;
 using System.Reflection;
 
-namespace Contoso.Data
+namespace Contoso.Mail.Data
 {
   public class CustomResolver : SimpleCRUD.IColumnNameResolver
   {

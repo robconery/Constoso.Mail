@@ -1,8 +1,5 @@
-using System.Dynamic;
-using System.Data;
-using System.Collections.Specialized;
 using System.Text;
-namespace Contoso.Data;
+namespace Contoso.Mail.Data;
 public static class StringExtensions
 {
   public static string ToSnakeCase(this string text)

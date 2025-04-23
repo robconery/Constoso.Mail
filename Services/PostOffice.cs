@@ -1,11 +1,16 @@
 using Contoso.Data;
 using Contoso.Mail.Models;
-using Contoso.Services;
 using Microsoft.Data.Sqlite;
 using System.Data;
 using Dapper;
 
-namespace Contoso.Services;
+namespace Contoso.Mail.Services;
+
+
+public interface IPostOffice
+{
+
+}
 
 /// <summary>
 /// Handles broadcast creation and mailing operations

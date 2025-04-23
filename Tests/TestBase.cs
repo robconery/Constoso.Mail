@@ -1,6 +1,5 @@
 using System.Data;
-using Contoso.Data;
-using Contoso.Mail.Models;
+using Contoso.Mail.Data;
 
 public abstract class TestBase : IDisposable
 {

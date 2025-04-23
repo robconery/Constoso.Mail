@@ -1,5 +1,5 @@
 using Microsoft.OpenApi.Models;
-using Contoso.Data;
+using Contoso.Mail.Data;
 using Contoso.Mail.Services;
 
 //load up the config from env and appsettings

@@ -1,5 +1,5 @@
 using Contoso.Mail.Models;
-using Contoso.Services;
+using Contoso.Mail.Services;
 using Microsoft.Data.Sqlite;
 using System.Data;
 using Xunit;
