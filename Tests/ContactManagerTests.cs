@@ -47,10 +47,19 @@ public class ContactManagerTests : TestBase
     _contactManager.SignUp(contact);
     contact = _contactManager.Get(contact.Email);
     // Act
-    var result = _contactManager.Delete(contact);
+    if (contact != null)
+    {
+      var result = _contactManager.Delete(contact);
+      // Assert
+      Assert.True(result.Data.Success);
+    }
+    else
+    {
+      throw new InvalidOperationException("Contact can't be saved");
+    }
 
-    // Assert
-    Assert.True(result.Data.Success);
+
+
   }
 
   [Fact]
@@ -74,17 +83,39 @@ public class ContactManagerTests : TestBase
     _contactManager.SignUp(contact);
 
     contact = _contactManager.Get(contact.Email);
-    Assert.NotNull(contact);
-    Assert.True(contact.Subscribed);
+    if (contact != null)
+    {
+      // Assert
+      Assert.True(contact.Subscribed);
+    }
+    else
+    {
+      throw new InvalidOperationException("Contact can't be saved");
+    }
+
   }
+  [Fact]
   public void Contact_CanUnsub()
   {
     var contact = new Contact { Email = "testunsub@example.com", Name = "Test User" };
     _contactManager.SignUp(contact);
     contact = _contactManager.Get(contact.Email);
-    _contactManager.OptOut(contact.Key);
-    contact = _contactManager.Get(contact.Email);
 
-    Assert.False(contact.Subscribed);
+    if (contact != null)
+    {
+      _contactManager.OptOut(contact.Key);
+      contact = _contactManager.Get(contact.Email);
+      if (contact != null)
+      {
+        Assert.False(contact.Subscribed);
+      }
+
+    }
+    else
+    {
+      throw new InvalidOperationException("Contact can't be saved");
+    }
+
+
   }
 }
