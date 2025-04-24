@@ -6,5 +6,5 @@
       "showInStatusBar": true
     },
     "debug.overrideEngine": "chat-v3"  
-  },
+  }
 }
