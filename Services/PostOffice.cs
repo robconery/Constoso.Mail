@@ -13,7 +13,7 @@ public interface IPostOffice
 }
 
 /// <summary>
-/// Handles broadcast creation and mailing operations
+/// Handles broadcast creation and mailing operations for the list mailer application
 /// </summary>
 public class PostOffice
 {
