@@ -31,8 +31,8 @@ namespace Contoso.Mail.Data
     {
 
       // Ensure the directory exists
-
-      var connectionString = FindSqlFile().Replace("db.sql", "contoso.db");
+      var dbPath = FindSqlFile().Replace("db.sql", "contoso.db");
+      var connectionString = $"Data Source={dbPath}";
 
       Dapper.SimpleCRUD.SetDialect(Dapper.SimpleCRUD.Dialect.SQLite);
       var resolver = new CustomResolver();
